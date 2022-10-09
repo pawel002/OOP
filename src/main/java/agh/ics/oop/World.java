@@ -37,6 +37,7 @@ public class World {
 
     public static void main(String[] args){
         out.println("Start");
+        var L = 1;
         run(convert(args));
         out.println("Stop");
     }
