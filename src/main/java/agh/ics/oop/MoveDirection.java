@@ -1,11 +1,8 @@
 package agh.ics.oop;
 
-public class Directions {
-
-    enum Direction {
+public enum MoveDirection {
         FORWARD,
         BACKWARD,
         RIGHT,
         LEFT
-    }
 }

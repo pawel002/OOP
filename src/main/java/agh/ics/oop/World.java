@@ -1,9 +1,9 @@
 package agh.ics.oop;
 import static java.lang.System.out;
-import agh.ics.oop.Directions.Direction;
+import agh.ics.oop.MoveDirection;
 
 public class World {
-    public static Direction[] convert(String[] args){
+    public static MoveDirection[] convert(String[] args){
         int size = 0;
         for(String arg : args){
             if(arg.equals("f") || arg.equals("b") || arg.equals("r") || arg.equals("l")) {
@@ -11,22 +11,22 @@ public class World {
             }
         }
 
-        Direction[] dir = new Direction[size];
+        MoveDirection[] dir = new MoveDirection[size];
         var idx = 0;
         for(String arg : args){
             switch(arg){
-                case "f" -> dir[idx++] = Direction.FORWARD;
-                case "b" -> dir[idx++] = Direction.BACKWARD;
-                case "r" -> dir[idx++] = Direction.RIGHT;
-                case "l" -> dir[idx++] = Direction.LEFT;
+                case "f" -> dir[idx++] = MoveDirection.FORWARD;
+                case "b" -> dir[idx++] = MoveDirection.BACKWARD;
+                case "r" -> dir[idx++] = MoveDirection.RIGHT;
+                case "l" -> dir[idx++] = MoveDirection.LEFT;
             }
         }
 
         return dir;
     }
 
-    public static void run(Direction[] args){
-        for(Direction arg : args){
+    public static void run(MoveDirection[] args){
+        for(MoveDirection arg : args){
             switch(arg){
                 case FORWARD -> out.println("forwards");
                 case BACKWARD -> out.println("backwards");
