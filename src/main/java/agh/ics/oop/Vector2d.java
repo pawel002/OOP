@@ -1,6 +1,13 @@
 package agh.ics.oop;
 
-record Vector2d(int x, int y) {
+class Vector2d {
+    public int x;
+    public int y;
+
+    public Vector2d(int x_, int y_){
+        x = x_;
+        y = y_;
+    }
 
     public String toString() {
         return String.join("", "(", String.valueOf(x), ", ", String.valueOf(y), ")");

@@ -7,63 +7,68 @@ import static org.junit.jupiter.api.Assertions.*;
 class WorldTest {
 
     @Test
-    public void Animal_Test_Reset(){
-        Animal animal = new Animal();
-        animal.move(MoveDirection.FORWARD);
-        animal.move(MoveDirection.RIGHT);
-        animal.reset();
-        assertEquals(new Vector2d(2, 2), animal.getPosition());
-        assertEquals(MapDirection.NORTH, animal.getDirection());
+    public void Animal_Test_Rotation(){
+        IWorldMap map = new RectangularMap(3, 3);
+        map.place(new Animal(map, new Vector2d(2, 2)));
+        for(int i=0; i<4; i++){
+            map.getAnimal(0).move(MoveDirection.RIGHT);
+        }
+        assertEquals(MapDirection.NORTH, map.getAnimal(0).getDirection());
     }
 
     @Test
     public void Animal_Test_Bounds(){
-        String[] testString1 = {"f", "f", "f", "f"};
-        Animal animal1 = new Animal();
-        for(MoveDirection arg : OptionsParser.parse(testString1)){
-            animal1.move(arg);
+        // upper bound
+        IWorldMap map = new RectangularMap(3, 3);
+        map.place(new Animal(map, new Vector2d(2, 2)));
+        for(int i=0; i<4; i++){
+            map.getAnimal(0).move(MoveDirection.FORWARD);
         }
-        assertEquals(new Vector2d(2, 4), animal1.getPosition());
-        assertEquals(MapDirection.NORTH, animal1.getDirection());
+        assertEquals(new Vector2d(2, 3), map.getAnimal(0).getPosition());
 
-        String[] testString2 = {"r", "f", "f", "f"};
-        animal1.reset();
-        for(MoveDirection arg : OptionsParser.parse(testString2)){
-            animal1.move(arg);
+        // lower bound
+        map.place(new Animal(map, new Vector2d(2, 2)));
+        for(int i=0; i<4; i++){
+            map.getAnimal(1).move(MoveDirection.BACKWARD);
         }
-        assertEquals(new Vector2d(4, 2), animal1.getPosition());
-        assertEquals(MapDirection.EAST, animal1.getDirection());
+        assertEquals(new Vector2d(2, 0), map.getAnimal(1).getPosition());
 
-        String[] testString3 = {"b", "b", "b", "b"};
-        animal1.reset();
-        for(MoveDirection arg : OptionsParser.parse(testString3)){
-            animal1.move(arg);
+        // right bound
+        map.place(new Animal(map, new Vector2d(2, 2)));
+        map.getAnimal(2).move(MoveDirection.RIGHT);
+        for(int i=0; i<4; i++){
+            map.getAnimal(2).move(MoveDirection.FORWARD);
         }
-        assertEquals(new Vector2d(2, 0), animal1.getPosition());
-        assertEquals(MapDirection.NORTH, animal1.getDirection());
+        assertEquals(new Vector2d(3, 2), map.getAnimal(2).getPosition());
 
-        String[] testString4 = {"r", "b", "b", "b"};
-        animal1.reset();
-        for(MoveDirection arg : OptionsParser.parse(testString4)){
-            animal1.move(arg);
+        // left bound
+        map.place(new Animal(map, new Vector2d(2, 2)));
+        map.getAnimal(3).move(MoveDirection.RIGHT);
+        for(int i=0; i<4; i++){
+            map.getAnimal(3).move(MoveDirection.BACKWARD);
         }
-        assertEquals(new Vector2d(0, 2), animal1.getPosition());
-        assertEquals(MapDirection.EAST, animal1.getDirection());
+        assertEquals(new Vector2d(0, 2), map.getAnimal(3).getPosition());
     }
 
+    // placing two animals on each other
     @Test
-    public void Animal_Test_Rotation(){
-        String[] testString1 = {"r", "r", "r", "r"};
-        Animal animal = new Animal();
-        for(MoveDirection arg : OptionsParser.parse(testString1)){
-            animal.move(arg);
-        }
-        assertEquals(MapDirection.NORTH, animal.getDirection());
+    public void Animal_Test_Place(){
+        IWorldMap map = new RectangularMap(3, 3);
+        map.place(new Animal(map, new Vector2d(2, 2)));
+        map.place(new Animal(map, new Vector2d(2, 2)));
+        assertEquals(1, map.animalCount());
     }
 
+    // testing collision
     @Test
-    public void Parser_Test(){
-        String[] testString1 = {"r", "x", "right", "l", "left", "fasnoj", "asd", "f"};
-        assertArrayEquals(OptionsParser.parse(testString1), new MoveDirection[]{MoveDirection.RIGHT,  MoveDirection.RIGHT, MoveDirection.LEFT, MoveDirection.LEFT, MoveDirection.FORWARD});
+    public void Animal_Test_Collision(){
+        IWorldMap map = new RectangularMap(3, 3);
+        map.place(new Animal(map, new Vector2d(2, 2)));
+        map.place(new Animal(map, new Vector2d(2, 1)));
+        map.getAnimal(1).move(MoveDirection.FORWARD);
+        map.getAnimal(1).move(MoveDirection.FORWARD);
+        map.getAnimal(1).move(MoveDirection.FORWARD);
+        assertEquals(new Vector2d(2, 1), map.getAnimal(1).getPosition());
     }
+
 }

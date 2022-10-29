@@ -3,26 +3,47 @@ package agh.ics.oop;
 public class Animal {
     private Vector2d position = new Vector2d(2, 2);
     private MapDirection direction = MapDirection.NORTH;
+    private IWorldMap map;
+
+    Animal(IWorldMap map_){
+        map = map_;
+    }
+
+    Animal(IWorldMap map_, Vector2d pos_){
+        map = map_;
+        position = pos_;
+    }
 
     public String toString(){
-        return String.join("", "Position: ", position.toString(), ". Orientation: ", direction.toString(), ".");
+        return direction.toString();
     }
 
     public boolean isAt(Vector2d pos){
         return position.equals(pos);
     }
 
-    public void move(MoveDirection dir){
-        if(dir == MoveDirection.RIGHT)
+    public boolean move(MoveDirection dir){
+        if(dir == MoveDirection.RIGHT) {
             direction = direction.next();
-        else if(dir == MoveDirection.LEFT)
+            return true;
+        }
+        else if(dir == MoveDirection.LEFT) {
             direction = direction.previous();
-        else if(dir == MoveDirection.FORWARD)
-            position = (position.add(direction.UnitVector()));
-        else if(dir == MoveDirection.BACKWARD)
-            position = (position.subtract(direction.UnitVector()));
-
-        position = position.lowerLeft(new Vector2d(4,4)).upperRight(new Vector2d(0,0));
+            return true;
+        }
+        else if(dir == MoveDirection.FORWARD){
+            if(map.canMoveTo(position.add(direction.UnitVector()))) {
+                position = position.add(direction.UnitVector());
+                return true;
+            }
+        }
+        else if(dir == MoveDirection.BACKWARD){
+            if(map.canMoveTo(position.subtract(direction.UnitVector()))) {
+                position = position.subtract(direction.UnitVector());
+                return true;
+            }
+        }
+        return false;
     }
 
     public Vector2d getPosition(){

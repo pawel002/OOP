@@ -1,22 +1,18 @@
 package agh.ics.oop;
 import static java.lang.System.out;
 
-// Aby zwierzęta nie nachodziły na siebie, wystarczy przed wykonaniem ruchy przez dane zwierze
-// przejść po tablicy zawierającej wszytskie zwierzęta i sprawdzić czy któreś z nich znajduje
-// się na pozycji na której zwierze znajdzie się po ruchu. Można to wykonać za pomocą isAt.
-// Jeżeli kolizja nie wystąpi można wykonać ruch.
-
 public class World {
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException {
         out.println("Start.");
 
-        MoveDirection[] MoveSet = OptionsParser.parse(args);
-        Animal dog = new Animal();
-        for(MoveDirection Move : MoveSet){
-            dog.move(Move);
-            out.println(dog);
-        }
+        MoveDirection[] directions = OptionsParser.parse(args);
+        IWorldMap map = new RectangularMap(10, 5);
+        Vector2d[] positions = { new Vector2d(2,2), new Vector2d(3,4) };
+        IEngine engine = new SimulationEngine(directions, map, positions);
+        // Jeżeli chcemy wizualizacje w consoli możemy uzyc run.
+        // engine.run();
+        engine.visualize();
 
         out.println("Stop.");
     }
