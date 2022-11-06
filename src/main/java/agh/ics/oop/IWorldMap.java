@@ -1,5 +1,7 @@
 package agh.ics.oop;
 
+import java.util.List;
+
 /**
  * The interface responsible for interacting with the map of the world.
  * Assumes that Vector2d and MoveDirection classes are defined.
@@ -44,9 +46,16 @@ public interface IWorldMap {
      *            The position of the object.
      * @return Object or null if the position is not occupied.
      */
+    List<AbstractWorldMapElement> getElements();
+
+    Vector2d getLowerLeft();
+
+    Vector2d getUpperRight();
+
     Object objectAt(Vector2d position);
 
-    Animal getAnimal(int i);
+    // returns i-th animal mod animals_count
+    AbstractWorldMapElement getAnimal(int i);
 
     // helper function that returns number of animals on map
     int animalCount();

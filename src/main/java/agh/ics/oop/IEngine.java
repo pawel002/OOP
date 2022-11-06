@@ -15,5 +15,5 @@ public interface IEngine {
      */
     void run();
 
-    void visualize() throws InterruptedException;
+//    void visualize() throws InterruptedException;
 }

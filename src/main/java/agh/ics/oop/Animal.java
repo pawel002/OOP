@@ -1,13 +1,8 @@
 package agh.ics.oop;
 
-public class Animal {
-    private Vector2d position = new Vector2d(2, 2);
+public class Animal extends AbstractWorldMapElement{
     private MapDirection direction = MapDirection.NORTH;
-    private IWorldMap map;
-
-    Animal(IWorldMap map_){
-        map = map_;
-    }
+    private final IWorldMap map;
 
     Animal(IWorldMap map_, Vector2d pos_){
         map = map_;
@@ -16,10 +11,6 @@ public class Animal {
 
     public String toString(){
         return direction.toString();
-    }
-
-    public boolean isAt(Vector2d pos){
-        return position.equals(pos);
     }
 
     public boolean move(MoveDirection dir){
@@ -46,16 +37,12 @@ public class Animal {
         return false;
     }
 
-    public Vector2d getPosition(){
-        return position;
-    }
-
     public MapDirection getDirection(){
         return direction;
     }
 
-    public void reset(){
-        position = new Vector2d(2, 2);
-        direction = MapDirection.NORTH;
+    @Override
+    public int identifier(){
+        return 1;
     }
 }
