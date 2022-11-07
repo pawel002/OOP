@@ -61,7 +61,7 @@ public interface IWorldMap {
     int animalCount();
 
     // changes pos: old -> new in hashed_elements
-    void positionChanged(Vector2d oldPos, Vector2d newPos);
+    void positionChanged(Vector2d oldPosition, Vector2d newPosition);
 
     // returns [width, height]
     int[] getSize();
