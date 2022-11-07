@@ -2,6 +2,9 @@ package agh.ics.oop;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class WorldTest {
@@ -89,4 +92,27 @@ class WorldTest {
         assertEquals(11, count);
     }
 
+    @Test
+    public void GrassField_Expansion_Test(){
+        IWorldMap map = new GrassField(10);
+        Animal dog = new Animal(map, new Vector2d(11, 11));
+        map.place(dog);
+        assertEquals(new Vector2d(11, 11), map.getUpperRight());
+        ((Animal) map.getAnimal(0)).move(MoveDirection.FORWARD);
+        assertEquals(new Vector2d(11, 12), map.getUpperRight());
+    }
+
+    @Test
+    public void Hashing_Test(){
+        IWorldMap map = new RectangularMap(4, 4);
+        Animal dog = new Animal(map, new Vector2d(2, 2));
+        Animal cat = new Animal(map, new Vector2d(2, 3));
+        map.place(dog);
+        map.place(cat);
+        ((Animal) map.getAnimal(1)).move(MoveDirection.FORWARD);
+        ((Animal) map.getAnimal(0)).move(MoveDirection.FORWARD);
+        // jezeli obserwer nie dzialalby prawodlowo, to ruch psa do gory powinien byc niemozliwy
+        // ponieważ w hashmapie dalej pozostawałaby stara pozycja kota
+        assertEquals(new Vector2d(2, 3), ((Animal) map.getAnimal(0)).getPosition());
+    }
 }

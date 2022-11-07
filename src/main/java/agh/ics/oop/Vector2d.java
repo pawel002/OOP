@@ -48,4 +48,9 @@ class Vector2d {
     public Vector2d opposite() {
         return new Vector2d(-this.x, -this.y);
     }
+
+    @Override
+    public int hashCode(){
+        return (this.x * this.x * this.x) % 31 +  (7 * this.y) + 31;
+    }
 }

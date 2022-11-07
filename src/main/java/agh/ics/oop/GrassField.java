@@ -11,8 +11,11 @@ public class GrassField extends AbstractWorldMap{
         while (elements.size() != grassCount) {
             int x = ThreadLocalRandom.current().nextInt(0,  (int) Math.ceil(Math.sqrt(10*n)));
             int y = ThreadLocalRandom.current().nextInt(0,  (int) Math.ceil(Math.sqrt(10*n)));
-            if(!this.isOccupied(new Vector2d(x, y))){
-                elements.add(new Grass(new Vector2d(x, y)));
+            Vector2d pos = new Vector2d(x, y);
+            if(!this.isOccupied(pos)){
+                Grass grass = new Grass(pos);
+                elements.add(grass);
+                hashed_elements.put(pos, grass);
             }
         }
     }
@@ -24,23 +27,27 @@ public class GrassField extends AbstractWorldMap{
 
     // metoda dla zadania dodatkowego
     @Override
-    public boolean canMoveTo(Vector2d position) {
-        for(AbstractWorldMapElement element : elements){
-            if(element.isAt(position)){
-                if(element.identifier() == 0){
-                    elements.remove(element);
-                    boolean flag = true;
-                    while (flag) {
-                        int x = ThreadLocalRandom.current().nextInt(0,  (int) Math.ceil(Math.sqrt(10*grassCount)));
-                        int y = ThreadLocalRandom.current().nextInt(0,  (int) Math.ceil(Math.sqrt(10*grassCount)));
-                        if(!(this.isOccupied(new Vector2d(x, y)) && !(position.equals(new Vector2d(x, y))))){
-                            elements.add(new Grass(new Vector2d(x, y)));
-                            flag = false;
-                        }
-                    }
-                    return true;
-                }
-                return false;
+    public boolean canMoveTo(Vector2d position){
+        AbstractWorldMapElement elem = hashed_elements.get(position);
+        if(elem == null){
+            return true;
+        }
+        // animal then we cant move
+        if(elem.identifier() == 1){
+            return false;
+        }
+        // grass so we can move
+        elements.remove(elem);
+        boolean flag = true;
+        while (flag) {
+            int x = ThreadLocalRandom.current().nextInt(0,  (int) Math.ceil(Math.sqrt(10*grassCount)));
+            int y = ThreadLocalRandom.current().nextInt(0,  (int) Math.ceil(Math.sqrt(10*grassCount)));
+            Vector2d pos = new Vector2d(x, y);
+            if((!this.isOccupied(pos)) && (!pos.equals(position))){
+                Grass grass = new Grass(pos);
+                elements.add(grass);
+                hashed_elements.put(pos, grass);
+                flag = false;
             }
         }
         return true;
@@ -48,31 +55,39 @@ public class GrassField extends AbstractWorldMap{
 
     // aby na pewno dodać zwierze na miejsce trawy musimy nadpisac funkcje z absractworldmap
     @Override
-    public boolean place(Animal animal) {
-        for(AbstractWorldMapElement element : elements){
-            if(element.isAt(animal.getPosition())){
-                if(element.identifier() == 0){
-                    elements.remove(element);
-                    elements.add(animal);
-                    animals_count ++;
+    public boolean place(Animal animal){
+        AbstractWorldMapElement elem = hashed_elements.get(animal.getPosition());
+        if(elem == null){
+            animal.addObserver(this);
+            elements.add(animal);
+            hashed_elements.put(animal.getPosition(), animal);
+            animals_count ++;
+            return true;
+        }
+        // if animal we cant place
+        if(elem.identifier() == 1){
+            return false;
+        }
 
-                    boolean flag = true;
-                    while (flag) {
-                        int x = ThreadLocalRandom.current().nextInt(0, (int) Math.ceil(Math.sqrt(10 * grassCount)));
-                        int y = ThreadLocalRandom.current().nextInt(0, (int) Math.ceil(Math.sqrt(10 * grassCount)));
-                        if (!this.isOccupied(new Vector2d(x, y))) {
-                            elements.add(new Grass(new Vector2d(x, y)));
-                            flag = false;
-                        }
-                    }
+        // else its grass
+        animal.addObserver(this);
+        elements.remove(elem);
+        elements.add(animal);
+        hashed_elements.put(animal.getPosition(), animal);
 
-                    return true;
-                }
-                return false;
+        boolean flag = true;
+        while (flag) {
+            int x = ThreadLocalRandom.current().nextInt(0,  (int) Math.ceil(Math.sqrt(10*grassCount)));
+            int y = ThreadLocalRandom.current().nextInt(0,  (int) Math.ceil(Math.sqrt(10*grassCount)));
+            Vector2d pos = new Vector2d(x, y);
+            if(!this.isOccupied(pos)){
+                Grass grass = new Grass(pos);
+                elements.add(grass);
+                hashed_elements.put(pos, grass);
+                flag = false;
             }
         }
-        elements.add(animal);
-        animals_count ++;
+
         return true;
     }
 

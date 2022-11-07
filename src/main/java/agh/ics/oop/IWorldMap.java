@@ -60,6 +60,11 @@ public interface IWorldMap {
     // helper function that returns number of animals on map
     int animalCount();
 
+    // changes pos: old -> new in hashed_elements
+    void positionChanged(Vector2d oldPos, Vector2d newPos);
+
     // returns [width, height]
     int[] getSize();
+
+
 }
