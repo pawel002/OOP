@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Animal extends AbstractWorldMapElement{
-    private List<IPositionChangeObserver> observer_list = new ArrayList<>();
+    private final List<IPositionChangeObserver> observer_list = new ArrayList<>();
     private MapDirection direction = MapDirection.NORTH;
     private final IWorldMap map;
 
@@ -31,14 +31,16 @@ public class Animal extends AbstractWorldMapElement{
         else if(dir == MoveDirection.FORWARD){
             if(map.canMoveTo(position.add(direction.UnitVector()))) {
                 position = position.add(direction.UnitVector());
-                this.positionChanged(oldPos, position);
+                positionChanged(oldPos, position);
+                map.moved(oldPos, position);
                 return true;
             }
         }
         else if(dir == MoveDirection.BACKWARD){
             if(map.canMoveTo(position.subtract(direction.UnitVector()))) {
                 position = position.subtract(direction.UnitVector());
-                this.positionChanged(oldPos, position);
+                positionChanged(oldPos, position);
+                map.moved(oldPos, position);
                 return true;
             }
         }

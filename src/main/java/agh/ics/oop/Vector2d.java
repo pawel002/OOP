@@ -1,6 +1,6 @@
 package agh.ics.oop;
 
-class Vector2d {
+public class Vector2d {
     public int x;
     public int y;
 

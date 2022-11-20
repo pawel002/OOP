@@ -3,18 +3,18 @@ package agh.ics.oop;
 import java.util.ArrayList;
 import java.util.Vector;
 
-class RectangularMap extends AbstractWorldMap{
-    public Vector2d LowerLeft;
-    public Vector2d UpperRight;
+public class RectangularMap extends AbstractWorldMap{
+    private final Vector2d bottomLeft;
+    private final Vector2d topRight;
 
-    RectangularMap(int width, int height){
-        LowerLeft = new Vector2d(0, 0);
-        UpperRight = new Vector2d(width, height);
+    public RectangularMap(int width, int height){
+        bottomLeft = new Vector2d(0, 0);
+        topRight = new Vector2d(width, height);
     }
 
     @Override
     public boolean canMoveTo(Vector2d position){
-        if(!(position.precedes(UpperRight) && position.follows(LowerLeft)))
+        if(!(position.precedes(topRight) && position.follows(bottomLeft)))
             return false;
         return super.canMoveTo(position);
     }
@@ -22,22 +22,10 @@ class RectangularMap extends AbstractWorldMap{
     @Override
     public boolean place(Animal animal) {
         Vector2d pos = animal.getPosition();
-        if(pos.precedes(LowerLeft) || pos.follows(UpperRight)) return false;
-        return super.place(animal);
-    }
-
-    @Override
-    public Vector2d getLowerLeft(){
-        return LowerLeft;
-    }
-
-    @Override
-    public Vector2d getUpperRight(){
-        return UpperRight;
-    }
-
-    @Override
-    public int[] getSize(){
-        return new int[]{UpperRight.x , UpperRight.y};
+        if(pos.precedes(bottomLeft) || pos.follows(topRight))
+            throw new IllegalArgumentException("Nie można dodać zwierzaka. Pole " + animal.getPosition().toString() + " jest już zajęte.");
+        if (super.place(animal))
+            return  true;
+        throw new IllegalArgumentException("Nie można dodać zwierzaka. Pole " + animal.getPosition().toString() + " jest już zajęte.");
     }
 }

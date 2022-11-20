@@ -46,25 +46,12 @@ public interface IWorldMap {
      *            The position of the object.
      * @return Object or null if the position is not occupied.
      */
-    List<AbstractWorldMapElement> getElements();
-
-    Vector2d getLowerLeft();
-
-    Vector2d getUpperRight();
 
     Object objectAt(Vector2d position);
 
-    // returns i-th animal mod animals_count
-    AbstractWorldMapElement getAnimal(int i);
+    Vector2d  getTopRight();
 
-    // helper function that returns number of animals on map
-    int animalCount();
-
-    // changes pos: old -> new in hashed_elements
-    void positionChanged(Vector2d oldPosition, Vector2d newPosition);
-
-    // returns [width, height]
-    int[] getSize();
-
-
+    Vector2d  getBottomLeft();
+    // Changes hash fwhen animals move and grass gets eaten
+    void moved(Vector2d oldPos, Vector2d newPos);
 }

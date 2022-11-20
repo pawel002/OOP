@@ -3,26 +3,24 @@ package agh.ics.oop;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 public class GrassField extends AbstractWorldMap{
     public int grassCount;
 
     public GrassField(int n) {
         grassCount = n;
-        while (elements.size() != grassCount) {
+        while (hashed_elements.size() != grassCount) {
             int x = ThreadLocalRandom.current().nextInt(0,  (int) Math.ceil(Math.sqrt(10*n)));
             int y = ThreadLocalRandom.current().nextInt(0,  (int) Math.ceil(Math.sqrt(10*n)));
             Vector2d pos = new Vector2d(x, y);
             if(!this.isOccupied(pos)){
                 Grass grass = new Grass(pos);
-                elements.add(grass);
+                observer.place(grass);
                 hashed_elements.put(pos, grass);
             }
         }
-    }
-
-    // metoda do testów
-    public List<AbstractWorldMapElement> getElements(){
-        return elements;
     }
 
     // metoda dla zadania dodatkowego
@@ -37,7 +35,6 @@ public class GrassField extends AbstractWorldMap{
             return false;
         }
         // grass so we can move
-        elements.remove(elem);
         boolean flag = true;
         while (flag) {
             int x = ThreadLocalRandom.current().nextInt(0,  (int) Math.ceil(Math.sqrt(10*grassCount)));
@@ -45,7 +42,7 @@ public class GrassField extends AbstractWorldMap{
             Vector2d pos = new Vector2d(x, y);
             if((!this.isOccupied(pos)) && (!pos.equals(position))){
                 Grass grass = new Grass(pos);
-                elements.add(grass);
+                observer.positionChanged(position, pos);
                 hashed_elements.put(pos, grass);
                 flag = false;
             }
@@ -58,22 +55,19 @@ public class GrassField extends AbstractWorldMap{
     public boolean place(Animal animal){
         AbstractWorldMapElement elem = hashed_elements.get(animal.getPosition());
         if(elem == null){
-            animal.addObserver(this);
-            elements.add(animal);
             hashed_elements.put(animal.getPosition(), animal);
-            animals_count ++;
+            observer.place(animal);
             return true;
         }
         // if animal we cant place
         if(elem.identifier() == 1){
-            return false;
+            throw new IllegalArgumentException("Nie można dodać zwierzaka. Pole " + animal.getPosition().toString() + " jest już zajęte.");
         }
 
         // else its grass
-        animal.addObserver(this);
-        elements.remove(elem);
-        elements.add(animal);
+        hashed_elements.remove(animal.getPosition());
         hashed_elements.put(animal.getPosition(), animal);
+        observer.place(animal);
 
         boolean flag = true;
         while (flag) {
@@ -82,7 +76,7 @@ public class GrassField extends AbstractWorldMap{
             Vector2d pos = new Vector2d(x, y);
             if(!this.isOccupied(pos)){
                 Grass grass = new Grass(pos);
-                elements.add(grass);
+                observer.positionChanged(animal.getPosition(), pos);
                 hashed_elements.put(pos, grass);
                 flag = false;
             }
@@ -91,30 +85,4 @@ public class GrassField extends AbstractWorldMap{
         return true;
     }
 
-    @Override
-    public Vector2d getLowerLeft(){
-        int min_x = elements.get(0).getPosition().x;
-        int min_y = elements.get(0).getPosition().y;
-        for(AbstractWorldMapElement element : elements){
-            min_x = Math.min(min_x, element.getPosition().x);
-            min_y = Math.min(min_y, element.getPosition().y);
-        }
-        return new Vector2d(min_x, min_y);
-    }
-
-    @Override
-    public Vector2d getUpperRight(){
-        int max_x = elements.get(0).getPosition().x;
-        int max_y = elements.get(0).getPosition().y;
-        for(AbstractWorldMapElement element : elements){
-            max_x = Math.max(max_x, element.getPosition().x);
-            max_y = Math.max(max_y, element.getPosition().y);
-        }
-        return new Vector2d(max_x, max_y);
-    }
-
-    @Override
-    public int[] getSize() {
-        return new int[0];
-    }
 }
