@@ -2,6 +2,7 @@ package agh.ics.oop;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ class WorldTest {
     }
 
     @Test
-    public void Animal_Test_Rotation(){
+    public void Animal_Test_Rotation() throws FileNotFoundException {
         IWorldMap map = new RectangularMap(3, 3);
         Vector2d[] positions = { new Vector2d(2,2)};
         MoveDirection[] directions = OptionsParser.parse(List.of(new String[]{"r", "r", "r", "r"}));
@@ -31,7 +32,7 @@ class WorldTest {
     }
 
     @Test
-    public void Animal_Test_Bounds1() {
+    public void Animal_Test_Bounds1() throws FileNotFoundException {
         // upper bound
         IWorldMap map = new RectangularMap(3, 3);
         Vector2d[] positions = {new Vector2d(2, 2)};
@@ -42,7 +43,7 @@ class WorldTest {
     }
 
     @Test
-    public void Animal_Test_Bounds2() {
+    public void Animal_Test_Bounds2() throws FileNotFoundException {
         // lower bound
         IWorldMap map = new RectangularMap(3, 3);
         Vector2d[] positions = {new Vector2d(2, 2)};
@@ -53,7 +54,7 @@ class WorldTest {
     }
 
     @Test
-    public void Animal_Test_Bounds3() {
+    public void Animal_Test_Bounds3() throws FileNotFoundException {
         // right bound
         IWorldMap map = new RectangularMap(3, 3);
         Vector2d[] positions = {new Vector2d(2, 2)};
@@ -64,7 +65,7 @@ class WorldTest {
     }
 
     @Test
-    public void Animal_Test_Bounds4() {
+    public void Animal_Test_Bounds4() throws FileNotFoundException {
         // left bound
         IWorldMap map = new RectangularMap(3, 3);
         Vector2d[] positions = {new Vector2d(2, 2)};
@@ -87,12 +88,14 @@ class WorldTest {
             assertEquals(1, sim.animal_count);
         }  catch (IllegalArgumentException  exception){
             assertEquals("Nie można dodać zwierzaka. Pole (2, 2) jest już zajęte.", exception.getMessage());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
     // testing collision
     @Test
-    public void Animal_Test_Collision(){
+    public void Animal_Test_Collision() throws FileNotFoundException {
         IWorldMap map = new RectangularMap(3, 3);
         Vector2d[] positions = {new Vector2d(2, 2), new Vector2d(2, 1)};
         MoveDirection[] directions = OptionsParser.parse(List.of(new String[]{"r", "f", "r", "f", "r", "f"}));
@@ -102,7 +105,7 @@ class WorldTest {
     }
 
     @Test
-    public void Animal_Grass_Test_Collision(){
+    public void Animal_Grass_Test_Collision() throws FileNotFoundException {
 
         IWorldMap map = new GrassField(1);
         MoveDirection[] directions = OptionsParser.parse(List.of(new String[]{"f"}));

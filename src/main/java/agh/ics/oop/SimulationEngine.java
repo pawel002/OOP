@@ -30,7 +30,7 @@ public class SimulationEngine implements IEngine, Runnable {
     protected List<Animal> animals = new ArrayList<>();
     private MoveDirection[] directions;
     private IWorldMap map;
-    private int animal_count;
+    public int animal_count;
 
 
     public SimulationEngine(MoveDirection[] directions_, IWorldMap map_, Vector2d[] positions){
@@ -70,51 +70,6 @@ public class SimulationEngine implements IEngine, Runnable {
     }
 
 
-//    public void visualize(){
-//        System.out.println(map);
-//        GridPane grid = new GridPane();
-//        grid.setAlignment(Pos.CENTER);
-//        grid.setPrefSize(1080, 720);
-//        grid.setGridLinesVisible(true);
-//
-//        Scene scene = new Scene(grid, 1080, 720);
-//        primaryStage.setScene(scene);
-//        primaryStage.setTitle("Programowanie obiektowe");
-//
-//        int width = map.getTopRight().x - map.getBottomLeft().x +  2;
-//        int height = map.getTopRight().y - map.getBottomLeft().y + 2;
-//
-//        Label[] Labels = new Label[width*height];
-//        for(int i=0; i<height; i++){
-//            for(int j=0; j<width; j++){
-//                AbstractWorldMapElement elem = (AbstractWorldMapElement) map.objectAt(new Vector2d(map.getBottomLeft().x + j - 1, height  + map.getBottomLeft().y - i-2));
-//                if (elem  != null){
-//                    GuiElementBox elementBox = new GuiElementBox(elem, 20);
-//                    grid.add(elementBox.getBox(), j, i, 1,  1);
-//                    GridPane.setHalignment(elementBox.getBox(), HPos.CENTER);
-//                }
-//                else {
-//                    if (i == height - 1){
-//                        Labels[i * width + j] = new Label(String.valueOf(j + map.getBottomLeft().x - 1));
-//                        Labels[i*width + j].setAlignment(Pos.CENTER);
-//                        Labels[i*width + j].setMinSize(50, 50);
-//                        grid.add(Labels[i*width + j], j, i, 1,  1);
-//                        GridPane.setHalignment(Labels[i*width + j], HPos.CENTER);
-//                    }
-//                    else if (j == 0){
-//                        Labels[i * width + j] = new Label(String.valueOf(height - 2 - i + map.getBottomLeft().y));
-//                        Labels[i*width + j].setAlignment(Pos.CENTER);
-//                        Labels[i*width + j].setMinSize(50, 50);
-//                        grid.add(Labels[i*width + j], j, i, 1,  1);
-//                        GridPane.setHalignment(Labels[i*width + j], HPos.CENTER);
-//                    }
-//                }
-//            }
-//        }
-//        Labels[width*height - width].setText("y/x");
-//        primaryStage.show();
-//    }
-
     public void run(){
         // add GuiElement observers
         for(Animal animal : animals){
@@ -123,10 +78,11 @@ public class SimulationEngine implements IEngine, Runnable {
         }
 
         Platform.runLater(()->{
+            // clear and make new frame
             App.clear();
             App.visualize();
         });
-
+        // sleep
         visualizationSleep();
 
         // jako, ze grass nie zmienia pozycji oraz obiekt guielementbox odpowiedzialny za trawe bedzie istnial
