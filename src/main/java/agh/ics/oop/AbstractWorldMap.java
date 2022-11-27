@@ -2,9 +2,9 @@ package agh.ics.oop;
 
 import java.util.*;
 
-abstract class AbstractWorldMap implements IWorldMap{
+public abstract class AbstractWorldMap implements IWorldMap{
     protected Map<Vector2d, AbstractWorldMapElement> hashed_elements = new HashMap<>();
-    protected IPositionChangeObserver observer = new MapBoundary();
+    protected MapBoundary observer = new MapBoundary();
 
     public boolean canMoveTo(Vector2d position) {
         return !isOccupied(position);

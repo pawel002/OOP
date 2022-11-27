@@ -1,6 +1,6 @@
 package agh.ics.oop;
 
-abstract class AbstractWorldMapElement implements IMapElement{
+public abstract class AbstractWorldMapElement implements IMapElement{
     protected Vector2d position;
 
     @Override
@@ -17,4 +17,5 @@ abstract class AbstractWorldMapElement implements IMapElement{
     public int identifier(){
         return 2;
     }
+
 }

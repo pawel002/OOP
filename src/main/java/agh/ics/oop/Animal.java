@@ -1,5 +1,6 @@
 package agh.ics.oop;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,5 +69,16 @@ public class Animal extends AbstractWorldMapElement{
         for(IPositionChangeObserver observer : observer_list){
             observer.positionChanged(oldPos, newPos);
         }
+    }
+
+    @Override
+    public String getResName(){
+        switch (direction){
+            case NORTH -> {return "src/main/resources/up.png";}
+            case EAST -> {return "src/main/resources/right.png";}
+            case SOUTH-> {return "src/main/resources/down.png";}
+            case WEST -> {return "src/main/resources/left.png";}
+        }
+        return "not found";
     }
 }

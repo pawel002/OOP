@@ -1,7 +1,10 @@
 package agh.ics.oop;
 
+import agh.ics.oop.gui.App;
+import agh.ics.oop.gui.GuiElementBox;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -18,15 +21,17 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class SimulationEngine implements IEngine {
+public class SimulationEngine implements IEngine, Runnable {
     protected List<Animal> animals = new ArrayList<>();
-    public MoveDirection[] directions;
-    public IWorldMap map;
-    public int animal_count;
+    private MoveDirection[] directions;
+    private IWorldMap map;
+    private int animal_count;
+
 
     public SimulationEngine(MoveDirection[] directions_, IWorldMap map_, Vector2d[] positions){
         directions = directions_;
@@ -43,7 +48,7 @@ public class SimulationEngine implements IEngine {
     }
 
     @Override
-    public void run(boolean  visualize){
+    public void run(boolean  visualize) throws FileNotFoundException {
         int count = 0;
         for(MoveDirection dir : directions) {
             if (visualize)
@@ -59,61 +64,90 @@ public class SimulationEngine implements IEngine {
         return animals.get(i %  animal_count);
     }
 
-    public void visualize(Stage primaryStage) throws InterruptedException {
-        System.out.println(map);
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setPrefSize(1080, 720);
-        grid.setGridLinesVisible(true);
+    @Override
+    public void setDirections(MoveDirection[] directions_) {
+        directions = directions_;
+    }
 
-        Scene scene = new Scene(grid, 1080, 720);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Programowanie obiektowe");
 
-        int width = map.getTopRight().x - map.getBottomLeft().x +  2;
-        int height = map.getTopRight().y - map.getBottomLeft().y + 2;
-
-        Label[] Labels = new Label[width*height];
-        for(int i=0; i<height; i++){
-            for(int j=0; j<width; j++){
-                AbstractWorldMapElement elem = (AbstractWorldMapElement) map.objectAt(new Vector2d(map.getBottomLeft().x + j - 1, height  + map.getBottomLeft().y - i-2));
-                if(i == height - 1)
-                    Labels[i*width + j] = new Label(String.valueOf(j + map.getBottomLeft().x-1));
-                else if(j == 0)
-                    Labels[i*width + j] = new Label(String.valueOf(height - 2 - i + map.getBottomLeft().y));
-                else if (elem  != null)
-                    Labels[i*width + j] = new Label(elem.toString());
-                else
-                    Labels[i*width + j] = new Label("");
-
-                Labels[i*width + j].setAlignment(Pos.CENTER);
-                Labels[i*width + j].setMinSize(50, 50);
-                grid.add(Labels[i*width + j], j, i, 1,  1);
-                GridPane.setHalignment(Labels[i*width + j], HPos.CENTER);
-            }
-        }
-        Labels[width*height - width].setText("y/x");
-        primaryStage.show();
-//        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), new EventHandler<ActionEvent>() {
-//            int count = 0;
+//    public void visualize(){
+//        System.out.println(map);
+//        GridPane grid = new GridPane();
+//        grid.setAlignment(Pos.CENTER);
+//        grid.setPrefSize(1080, 720);
+//        grid.setGridLinesVisible(true);
 //
-//            @Override
-//            public void handle(ActionEvent event) {
-//                MoveDirection move = directions[count];
-//                Animal animal = animals.get(count++ % animal_count);
-//                Vector2d pos = animal.getPosition();
-//                if(animal.move(move)){
-//                    Vector2d new_pos = animal.getPosition();
-//                    Labels[pos.x + 1+ (height - 2 - pos.y) * width].setText("");
-//                    Labels[new_pos.x + 1+ (height - 2 - new_pos.y) * width].setText(animal.toString());
+//        Scene scene = new Scene(grid, 1080, 720);
+//        primaryStage.setScene(scene);
+//        primaryStage.setTitle("Programowanie obiektowe");
+//
+//        int width = map.getTopRight().x - map.getBottomLeft().x +  2;
+//        int height = map.getTopRight().y - map.getBottomLeft().y + 2;
+//
+//        Label[] Labels = new Label[width*height];
+//        for(int i=0; i<height; i++){
+//            for(int j=0; j<width; j++){
+//                AbstractWorldMapElement elem = (AbstractWorldMapElement) map.objectAt(new Vector2d(map.getBottomLeft().x + j - 1, height  + map.getBottomLeft().y - i-2));
+//                if (elem  != null){
+//                    GuiElementBox elementBox = new GuiElementBox(elem, 20);
+//                    grid.add(elementBox.getBox(), j, i, 1,  1);
+//                    GridPane.setHalignment(elementBox.getBox(), HPos.CENTER);
 //                }
-//                else{
-//                    System.out.println("Collision detected. Cannot move.");
+//                else {
+//                    if (i == height - 1){
+//                        Labels[i * width + j] = new Label(String.valueOf(j + map.getBottomLeft().x - 1));
+//                        Labels[i*width + j].setAlignment(Pos.CENTER);
+//                        Labels[i*width + j].setMinSize(50, 50);
+//                        grid.add(Labels[i*width + j], j, i, 1,  1);
+//                        GridPane.setHalignment(Labels[i*width + j], HPos.CENTER);
+//                    }
+//                    else if (j == 0){
+//                        Labels[i * width + j] = new Label(String.valueOf(height - 2 - i + map.getBottomLeft().y));
+//                        Labels[i*width + j].setAlignment(Pos.CENTER);
+//                        Labels[i*width + j].setMinSize(50, 50);
+//                        grid.add(Labels[i*width + j], j, i, 1,  1);
+//                        GridPane.setHalignment(Labels[i*width + j], HPos.CENTER);
+//                    }
 //                }
-//                primaryStage.show();
 //            }
-//        }));
-//        timeline.setCycleCount(directions.length);
-//        timeline.play();
+//        }
+//        Labels[width*height - width].setText("y/x");
+//        primaryStage.show();
+//    }
+
+    public void run(){
+        // add GuiElement observers
+        for(Animal animal : animals){
+            GuiElementBox elementBox = new GuiElementBox(animal, 20);
+            animal.addObserver(elementBox);
+        }
+
+        Platform.runLater(()->{
+            App.clear();
+            App.visualize();
+        });
+
+        visualizationSleep();
+
+        // jako, ze grass nie zmienia pozycji oraz obiekt guielementbox odpowiedzialny za trawe bedzie istnial
+        // tylko w instancji trawy, to nie musimy sie nim martwic.
+        int count = 0;
+        for(MoveDirection dir : directions) {
+            animals.get(count++ % animal_count).move(dir);
+            Platform.runLater(()->{
+                App.clear();
+                App.visualize();
+            });
+            visualizationSleep();
+        }
+
+    }
+
+    private void visualizationSleep(){
+        try {
+            Thread.sleep(App.moveDelay);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

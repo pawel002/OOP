@@ -8,4 +8,6 @@ public interface IMapElement {
 
     // returns 1 for animal and 0 for grass
     public int identifier();
+
+    public String getResName();
 }
