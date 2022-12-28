@@ -1,4 +1,4 @@
-package agh.ics.oop;
+package objects;
 
 public class Vector2d {
     public int x;
@@ -51,6 +51,6 @@ public class Vector2d {
 
     @Override
     public int hashCode(){
-        return (this.x * this.x * this.x) % 31 +  (7 * this.y) + 31;
+        return (this.x * this.x) % 31 +  (7 * this.y) / 31;
     }
 }
